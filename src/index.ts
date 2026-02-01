@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -36,7 +35,7 @@ class PocketBaseServer {
     this.pb = new PocketBase(url);
 
     this.setupToolHandlers();
-    
+
     // Error handling
     this.server.onerror = (error) => console.error('[MCP Error]', error);
     process.on('SIGINT', async () => {
@@ -879,19 +878,19 @@ class PocketBaseServer {
     try {
       // Use _superusers collection for admin authentication
       const collection = args.isAdmin ? '_superusers' : (args.collection || 'users');
-      
+
       // For admin authentication, use environment variables if email/password not provided
       const email = args.isAdmin && !args.email ? process.env.POCKETBASE_ADMIN_EMAIL : args.email;
       const password = args.isAdmin && !args.password ? process.env.POCKETBASE_ADMIN_PASSWORD : args.password;
-      
+
       if (!email || !password) {
         throw new Error('Email and password are required for authentication');
       }
-      
+
       const authData = await this.pb
         .collection(collection)
         .authWithPassword(email, password);
-      
+
       return {
         content: [
           {
@@ -937,12 +936,12 @@ class PocketBaseServer {
     try {
       // Authenticate with PocketBase
       await this.pb.collection("_superusers").authWithPassword(process.env.POCKETBASE_ADMIN_EMAIL ?? '', process.env.POCKETBASE_ADMIN_PASSWORD ?? '');
-      
+
       // Get collection details
       const collection = await this.pb.collections.getOne(args.collectionIdOrName, {
         fields: args.fields
       });
-      
+
       return {
         content: [
           {
@@ -963,10 +962,10 @@ class PocketBaseServer {
     try {
       // Authenticate with PocketBase
       await this.pb.collection("_superusers").authWithPassword(process.env.POCKETBASE_ADMIN_EMAIL ?? '', process.env.POCKETBASE_ADMIN_PASSWORD ?? '');
-      
+
       // Create a new backup
       const backupResult = await this.pb.backups.create(args.name ?? '', {});
-      
+
       return {
         content: [
           {
@@ -1018,10 +1017,10 @@ class PocketBaseServer {
     try {
       // Authenticate with PocketBase as admin (required for collection deletion)
       await this.pb.collection("_superusers").authWithPassword(process.env.POCKETBASE_ADMIN_EMAIL ?? '', process.env.POCKETBASE_ADMIN_PASSWORD ?? '');
-      
+
       // Delete the collection
       await this.pb.collections.delete(args.collectionIdOrName);
-      
+
       return {
         content: [
           {
